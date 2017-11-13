@@ -12,4 +12,6 @@ var config = {
 
 firebase.initializeApp(config);
 
+var ref = firebase.app().database().ref();
+
 module.exports = firebase;

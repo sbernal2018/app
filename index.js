@@ -7,7 +7,7 @@ const app = express();
 const host = process.env.APP_HOST || '127.0.0.1';
 const port = process.env.APP_PORT || 8080;
 
-//const admin = require('./firebase');
+const firebase = require('./firebase');
 
 // Password for interacting with admin panel
 const ADMINISTRATION_PASSWORD = "12345";
@@ -21,10 +21,18 @@ app.use((req, res, next) => {
     next();
 });
 
+function writeCompanyData(companyID, name, employees, imageUrl) {
+  firebase.database().ref('users/' + companyID).set({
+    name: name,
+    employees: employees, // array
+    profile_picture : imageUrl
+  });
+}
+
 // Default search directory as index
 app.get('/', (req, res) => {
   res.render("index");
-  // On POST request, redirect to /search/ url
+
 });
 
 // Standard static about page
@@ -34,7 +42,7 @@ app.get('/about', (req, res) => {
 
 // Search query to get entries back
 app.get('/search/:query', (req, res) => {
-  
+
 });
 
 // Company name and information, all rendered in individual pages
@@ -44,8 +52,9 @@ app.get('/company/:query', (req, res) => {
 
 // Private admin page. Requires hard-coded admin password
 app.get('/admin', (req, res) => {
-  
+
 });
+
 
 // Setting up an event listener and error handler
 app.listen(port, host);
