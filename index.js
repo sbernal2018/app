@@ -1,6 +1,8 @@
 const path = require('path');
 const exphbs  = require('express-handlebars');
 const express = require('express');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
 const app = express();
 const firebase = require('./firebase');
 
@@ -37,12 +39,12 @@ app.get('/about', (req, res) => {
 
 // Search query to get entries back
 app.get('/search/:query', (req, res) => {
-
+    const { query } = req.params;
 });
 
 // Company name and information, all rendered in individual pages
 app.get('/company/:query', (req, res) => {
-
+    const { query } = req.params;
 });
 
 // Private admin page. Requires hard-coded admin password
