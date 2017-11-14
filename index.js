@@ -46,14 +46,16 @@ app.get('/company/:query', (req, res) => {
 
 // Private admin page. Requires hard-coded admin password
 app.get('/admin', (req, res) => {
-
+  
 });
-//404 Handler
+
+// 404 Handler
 app.use(function(req, res, next) {
     var err = new Error('Not Found');
     err.status = 404;
     next(err);
 });
+
 // error handler
 app.use(function(err, req, res, next) {
     // set locals, only providing error in development
