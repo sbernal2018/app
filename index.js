@@ -32,7 +32,6 @@ function writeCompanyData(companyID, name, employees, imageUrl) {
 // Default search directory as index
 app.get('/', (req, res) => {
   res.render("index");
-
 });
 
 // Standard static about page
