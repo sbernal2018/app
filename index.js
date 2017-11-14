@@ -3,10 +3,6 @@ const path = require('path');
 const exphbs  = require('express-handlebars');
 const express = require('express');
 const app = express();
-
-const host = process.env.APP_HOST || '127.0.0.1';
-const port = process.env.APP_PORT || 8080;
-
 const firebase = require('./firebase');
 
 // Password for interacting with admin panel
@@ -55,12 +51,3 @@ app.get('/admin', (req, res) => {
 
 });
 
-
-// Setting up an event listener and error handler
-app.listen(port, host);
-app.use(function (err, req, res, next) {
-  console.error(err.stack)
-  res.status(500).send('Something broke!')
-});
-
-console.log(`VEIPlus Server starting on http://${host}:${port}`)
