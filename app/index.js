@@ -4,8 +4,13 @@ const express = require('express');
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const app = express();
-const firebase = require('./firebase');
 
+const admin = require('./firebase-admin');
+const helpers = require('./helpers');
+
+const db = admin.database();
+
+// Considering using passport with firebase authentication + database
 // https://github.com/Rigidflame/firebase-passport-login
 // https://www.npmjs.com/package/passport-firebase-auth
 
@@ -13,16 +18,20 @@ const firebase = require('./firebase');
 const ADMINISTRATION_PASSWORD = "12345";
 
 // Configuring our Express server!
-app.engine('handlebars', exphbs({defaultLayout: 'default'}));
+app.engine('handlebars', exphbs({
+  defaultLayout: 'default',
+  helpers: helpers
+}));
+
 app.set('view engine', 'handlebars');
 
-app.set('views', path.join(__dirname, '/views'))
+app.set('views', path.join(__dirname, './../views'))
 app.use((req, res, next) => {
     next();
 });
 
 function writeCompanyData(companyID, name, employees, imageUrl) {
-  firebase.database().ref('companies/' + companyID).set({
+  db.ref('companies/' + companyID).set({
     name: name,
     employees: employees, // array
     profile_picture : imageUrl
@@ -31,7 +40,11 @@ function writeCompanyData(companyID, name, employees, imageUrl) {
 
 // Default search directory as index
 app.get('/', (req, res) => {
-  res.render("index");
+
+
+  res.render("index", {
+    title: "Search Directory"
+  });
 });
 
 // Standard static about page
@@ -51,7 +64,7 @@ app.get('/company/:query', (req, res) => {
 
 // Private admin page. Requires hard-coded admin password
 app.get('/admin', (req, res) => {
-  
+
 });
 
 // 404 Handler
@@ -69,3 +82,6 @@ app.use(function(err, req, res, next) {
     // render the error page
     res.send(err || 500);
 });
+
+
+module.exports = app
