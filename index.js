@@ -6,6 +6,9 @@ const bodyParser = require('body-parser');
 const app = express();
 const firebase = require('./firebase');
 
+// https://github.com/Rigidflame/firebase-passport-login
+// https://www.npmjs.com/package/passport-firebase-auth
+
 // Password for interacting with admin panel
 const ADMINISTRATION_PASSWORD = "12345";
 
@@ -19,7 +22,7 @@ app.use((req, res, next) => {
 });
 
 function writeCompanyData(companyID, name, employees, imageUrl) {
-  firebase.database().ref('users/' + companyID).set({
+  firebase.database().ref('companies/' + companyID).set({
     name: name,
     employees: employees, // array
     profile_picture : imageUrl
