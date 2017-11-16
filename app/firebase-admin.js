@@ -8,4 +8,5 @@ admin.initializeApp({
   databaseURL: "https://veiplus-96fa7.firebaseio.com"
 });
 
+
 module.exports = admin;
