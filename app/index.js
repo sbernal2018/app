@@ -1,6 +1,7 @@
 const path = require('path');
 const express = require('express');
 const exphbs  = require('express-handlebars');
+const flash = require('connect-flash'),
 
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
@@ -10,6 +11,8 @@ const admin = require('./firebase-admin');
 const helpers = require('./helpers');
 
 const db = admin.database();
+
+const TEST = "1234"
 
 // Configuring our Express server!
 app.engine('handlebars', exphbs({
@@ -24,10 +27,12 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(require('connect-flash')());
-app.use(function (req, res, next) {
-  res.locals.messages = require('express-messages')(req, res);
-  next();
+// Set connect-flash to display error/success alerts
+app.use(flash());
+app.use(function(req, res, next){
+    res.locals.success = req.flash('success');
+    res.locals.errors = req.flash('error');
+    next();
 });
 
 // Set bodyParser
@@ -36,13 +41,13 @@ app.use(bodyParser.urlencoded({ extended: false }));
 
 
 // Helpers for interfacing realtime database
-function writeCompanyData(companyID, employees, industry, location, imgUrl, description) {
-  db.ref('companies/' + companyID).set({
-    employees: employees,
-    industry: industry,
-    location: location,
-    imgUrl: imgUrl,
-    description: description
+function writeCompanyData(query) {
+  db.ref('companies/' + query.company).set({
+    employees: query.employees,
+    industry: query.industry,
+    location: query.location,
+    imgUrl: query.imgUrl,
+    description: query.description
   });
 }
 
@@ -127,9 +132,20 @@ app.get('/profile/:name', (req, res) => {
 
 // Private admin page. Requires hard-coded admin password
 app.get('/admin', (req, res) => {
-  var invite_token = req.body.invite_token;
-
+  res.render('admin', {
+    title: `Admin Panel`
+  });
 });
+
+app.post('/api/add/company', (req, res) => {
+  var companyQuery = req.body;
+  console.log(companyQuery);
+
+  writeCompanyData(companyQuery);
+  req.flash('success', 'Successfully added!')
+  res.redirect('/admin')
+});
+
 
 
 
