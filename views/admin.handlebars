@@ -1,8 +1,13 @@
 <div class="row">
   <div class ="col-md-12 text-center" style="topDiv">
-    <div class="alert alert-success">
-      <strong>Success!</strong> Indicates a successful or positive action.
+
+    {{#if message}}
+    <div class="error">
+      <span style="color: red">{{message}}</span>
     </div>
+    {{/if}}
+
+
     <h3>Administration Panel</h3>
     <hr>
     <p> Welcome to the VE+ Administration panel! From here, you may add companies and employees for that company. </p>
@@ -14,7 +19,7 @@
     <div class="panel panel-default">
       <div class="panel-heading">Add Company</div>
       <div class="panel-body">
-        <form action="/api/add/company" method="post">
+        <form action="/admin/company" method="POST">
           <div class="form-group">
             <input class="form-control" name="company" type="text" placeholder="Enter company name"><br>
             <input class="form-control" name="industry" type="text" placeholder="Enter industry"><br>
@@ -24,7 +29,7 @@
             <textarea class="form-control" name="description" type="text" placeholder="Enter description"></textarea><br>
 
           </div>
-          <button type="submit" class="btn btn-primary">Submit</button>
+          <button id="company-submit" type="submit" class="btn btn-primary">Submit</button>
         </form>
       </div>
     </div>
@@ -33,7 +38,7 @@
     <div class="panel panel-default">
       <div class="panel-heading">Add Employee</div>
       <div class="panel-body">
-        <form action="/api/add/employee" method="post">
+        <form action="/admin/employee" method="POST">
           <div class="form-group">
             <input class="form-control" name="company" type="text" placeholder="Enter company"><br>
             <hr>
@@ -42,7 +47,7 @@
             <textarea class="form-control" name="location" type="text" placeholder="Enter job description"></textarea><br>
             <input class="form-control" name="url" type="text" placeholder="Enter URL for profile picture"><br>
           </div>
-          <button type="submit" class="btn btn-primary">Submit</button>
+          <button id="submit" type="submit" class="btn btn-primary">Submit</button>
         </form>
       </div>
     </div>
@@ -55,4 +60,25 @@
   <div class="col-md-6">
 
   </div>
+</div>
+<div>
+  <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <script>
+  $.ajax({
+      type: "POST",
+      url: reqUrl,
+      data: reqBody,
+      dataType: "json",
+      success: function(data, textStatus) {
+          if (data.redirect) {
+              // data.redirect contains the string URL to redirect to
+              window.location.href = data.redirect;
+          }
+          else {
+              // data.form contains the HTML for the replacement form
+              $("#myform").replaceWith(data.form);
+          }
+      }
+    });
+  </script>
 </div>

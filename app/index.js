@@ -1,7 +1,7 @@
 const path = require('path');
 const express = require('express');
 const exphbs  = require('express-handlebars');
-const flash = require('connect-flash'),
+const flash = require('connect-flash');
 
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
@@ -12,51 +12,46 @@ const helpers = require('./helpers');
 
 const db = admin.database();
 
-const TEST = "1234"
-
 // Configuring our Express server!
 app.engine('handlebars', exphbs({
   defaultLayout: 'default',
   helpers: helpers
 }));
 
-app.set('view engine', 'handlebars');
-
-app.set('views', path.join(__dirname, './../views'))
 app.use((req, res, next) => {
+    //res.locals.messages = req.flash();
     next();
 });
 
-// Set connect-flash to display error/success alerts
-app.use(flash());
-app.use(function(req, res, next){
-    res.locals.success = req.flash('success');
-    res.locals.errors = req.flash('error');
-    next();
-});
+app.set('view engine', 'handlebars');
 
 // Set bodyParser
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-
+app.use(cookieParser('keyboard cat'));
+app.use(flash());
 
 // Helpers for interfacing realtime database
-function writeCompanyData(query) {
-  db.ref('companies/' + query.company).set({
+function writeCompanyData(query, callback) {
+  var companyRef = db.ref('companies/' + query.company);
+
+  companyRef.set({
     employees: query.employees,
     industry: query.industry,
     location: query.location,
     imgUrl: query.imgUrl,
     description: query.description
   });
+
+  callback(NULL, "Added company to database!");
 }
 
-function writeCompanyEmployees(employeeID, position, profilePic, jobDescription, contact){
-  db.ref('employees/' + employeeID).set({
-    position: position,
-    profilePic: profilePic,
-    jobDescription: jobDescription,
-    contact: contact,
+function writeCompanyEmployees(query, callback){
+  db.ref('employees/' + query.employee).set({
+    position: query.position,
+    profilePic: query.profilePic,
+    jobDescription: query.jobDescription,
+    contact: query.contact,
   });
 }
 
@@ -137,16 +132,24 @@ app.get('/admin', (req, res) => {
   });
 });
 
-app.post('/api/add/company', (req, res) => {
+app.post('/admin/company', (req, res) => {
   var companyQuery = req.body;
-  console.log(companyQuery);
 
-  writeCompanyData(companyQuery);
-  req.flash('success', 'Successfully added!')
-  res.redirect('/admin')
+  writeCompanyData(companyQuery, function(err, data){
+
+    if (err) {
+      res.redirect('/admin', {
+        message: req.flash('error', err)
+      });
+    }
+
+    // Redirect to admin page
+    res.redirect('/admin', {
+      message: req.flash('success', data)
+    });
+
+  });
 });
-
-
 
 
 // 404 Handler
