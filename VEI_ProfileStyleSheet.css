@@ -1,0 +1,27 @@
+#top_section{
+    background-color:rgb(0,255,242);
+    height:30vh;
+}
+
+#bottom_section{
+    background-color: rgb(208, 209, 205);
+    height:70vh;
+}
+
+
+
+body{
+    margin:0;padding:0;
+}
+
+.img-responsive{
+    height:35vh !important;
+    margin:0 auto;
+    margin-top:10vh;
+
+
+}
+
+h1,h2,p{
+    text-align:center;
+}
